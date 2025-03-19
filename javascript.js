@@ -1,3 +1,11 @@
+function choosePosition(){
+
+    let x = -(-(prompt("Set x")));
+    let y = -(-(prompt("Set y")));
+
+    return [x, y];
+}
+
 const myBoard = function (){
 
     let board;
@@ -74,13 +82,54 @@ const myBoard = function (){
         }
     }();
 
-    function playHand(x, y, is_X){
+    function playHand_p(x, y, is_X){
         setSimbolOnBoard_p(x, y, is_X);
         displayBoard();
+        console.log("");
         const win = check_p.all();
         return {is_X, win};
     }
 
-    return {getBoard, clearBoard, displayBoard, playHand};
+    function playHand(x, y, is_X){
+        if(x === undefined || y === undefined || is_X === undefined){
+            throw new TypeError("Position or simbol aren't defined");
+        }
+
+        if(!isNaN(x) || !isNaN(y)){
+            if(board[x][y] === "~"){
+                return playHand_p(x,y,is_X);
+            }else{
+                throw new Error("Position alredy signed, try another one");
+            }
+        }else{
+            throw new TypeError("X and Y aren't numbers");
+        }
+    }
+
+    function playRound(){
+        let is_X = false;
+        let status;
+        for(let i = 0; i<9; i++){
+            is_X = !is_X;
+            let position = choosePosition();
+            try{    
+                status = playHand(position[0], position[1],is_X);
+            }catch (e){
+                console.log("Something went wrong, try again");
+                console.log(e.message);
+                i--;
+                is_X = !is_X;
+                continue;
+            }
+
+            if(status.win){
+                displayWin_p(status.is_X);
+            }
+        }
+        displayTie_p();
+
+    }
+
+    return {getBoard, clearBoard, displayBoard, playRound};
 
 }();
