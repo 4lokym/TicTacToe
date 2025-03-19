@@ -92,11 +92,11 @@ const myBoard = function (){
 
     function playHand(x, y, is_X){
         if(x === undefined || y === undefined || is_X === undefined){
-            throw new TypeError("Position or simbol aren't defined");
+            throw new Error("Position or simbol aren't defined");
         }
 
         if(!isNaN(x) || !isNaN(y)){
-            if(board[x][y] === "~"){
+            if(board[x%3][y%3] === "~"){
                 return playHand_p(x,y,is_X);
             }else{
                 throw new Error("Position alredy signed, try another one");
@@ -124,12 +124,13 @@ const myBoard = function (){
 
             if(status.win){
                 displayWin_p(status.is_X);
+                return;
             }
         }
         displayTie_p();
 
     }
 
-    return {getBoard, clearBoard, displayBoard, playRound};
+    return {getBoard, clearBoard, displayBoard, playRound, playHand};
 
 }();
