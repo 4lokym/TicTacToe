@@ -1,12 +1,14 @@
-function choosePosition(){
-
-    let x = -(-(prompt("Set x")));
-    let y = -(-(prompt("Set y")));
-
-    return [x, y];
-}
-
 const myBoard = function (){
+
+    let is_X = false;
+
+    function getIs_X(){
+        return is_X;
+    }
+
+    function getXorO_String(){
+        return is_X ? "X":"O";
+    }
 
     let board;
     clearBoard();
@@ -107,7 +109,7 @@ const myBoard = function (){
     }
 
     function playRound(){
-        let is_X = false;
+        is_X = false;
         let status;
         for(let i = 0; i<9; i++){
             is_X = !is_X;
@@ -124,13 +126,36 @@ const myBoard = function (){
 
             if(status.win){
                 displayWin_p(status.is_X);
+                clearBoard();
                 return;
             }
         }
         displayTie_p();
+        clearBoard();
 
     }
 
-    return {getBoard, clearBoard, displayBoard, playRound, playHand};
+    function choosePosition(){
+
+        let x = -(-(prompt("Set x")));
+        let y = -(-(prompt("Set y")));
+    
+        return [x, y];
+    }
+
+    return {getBoard, clearBoard, displayBoard, playRound, playHand, choosePosition, getIs_X, getXorO_String};
 
 }();
+
+const screen_board = document.querySelector("body");
+
+screen_board.addEventListener("click", function (e){
+    if(e.target.tagName === "BUTTON"){
+        changeStyleOnClick(e.target);
+    }
+});
+
+function changeStyleOnClick(button){
+    button.classList.add(myBoard.getXorO_String().toLowerCase());
+    button.textContent = `${myBoard.getXorO_String()}`;
+}
