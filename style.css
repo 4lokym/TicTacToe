@@ -10,6 +10,17 @@ body{
     display: grid;
     align-content: center;
     justify-content: center;
+    position: relative;
+    gap: 5rem;
+    transition: all 200ms;
+}
+
+.red{
+    background-color: rgb(218, 156, 156);
+}
+
+.blue{
+    background-color: rgb(173, 173, 224);
 }
 
 .board{
@@ -18,8 +29,8 @@ body{
     justify-content: center;
     gap: 10px;
     
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 6rem);
+    grid-template-rows: repeat(3, 6rem);
 }
 
 .xo{
@@ -34,6 +45,25 @@ body{
     background-color: rgb(192, 192, 192);
     box-shadow: rgb(131, 131, 131) 0px 10px;
     transition:all 150ms;
+}
+
+.another-round{
+    width: fit-content;
+    font-size: 3rem;
+    background-color: black;
+    padding: 1rem;
+    outline:none;
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    box-shadow: rgb(131, 131, 131) 0px 10px;
+    transition:all 150ms;
+}
+
+.another-round:active{
+    box-shadow: rgb(131, 131, 131) 0px 5px;
+    transform: translateY(5px);
 }
 
 .x{

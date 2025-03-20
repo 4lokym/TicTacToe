@@ -155,15 +155,19 @@ const myBoardConsole = function (){
         return [x, y];
     }
 
+    function setIs_X(){
+        is_X = false;
+    }
 
 
-    return {getBoard, clearBoard, displayBoard, playRoundConsole, playHand, choosePositionConsole, getIs_X, getXorO_String, resetHandsPlayed, getHandsPlayed, displayTie_p, displayWin_p};
+    return {getBoard, clearBoard, displayBoard, playRoundConsole, playHand, choosePositionConsole, getIs_X, getXorO_String, resetHandsPlayed, getHandsPlayed, displayTie_p, displayWin_p, setIs_X};
 
 }();
 
 const myBoard = function(){
     const screen_board = document.querySelector("body");
     const buttons = document.querySelectorAll(".xo");
+
     const buttons_on_board = function(){
         let matrix = [];
 
@@ -181,12 +185,31 @@ const myBoard = function(){
 
     //---------
     screen_board.addEventListener("click", function (e){
+        
         const button = e.target;
-        if(button.tagName === "BUTTON" && !(button.className === "x" || button.className === "o")){
-            winTieHandler(myBoardConsole.playHand(button.id[0], button.id[1]));
+        if(button.className === "xo" && !(button.className === "x" || button.className === "o")){
             setXorOStyle(button);
+            setBackGround();
+            winTieHandler(myBoardConsole.playHand(button.id[0], button.id[1]));
         }
     });
+
+    const body = document.querySelector("body");
+
+    function setBackGround(){
+        if(!myBoardConsole.getIs_X()){
+            resetBackground();
+            body.classList.add("red");
+        }else{
+            resetBackground();
+            body.classList.add("blue");
+        }
+    }
+
+    function resetBackground(){
+        body.classList.remove("red");
+        body.classList.remove("blue");
+    }
 
     function setXorOStyle(button){
         button.classList.add(myBoardConsole.getXorO_String().toLowerCase());
@@ -207,20 +230,22 @@ const myBoard = function(){
 
     function winTieHandler(result){
         if(result.win){
-            displayWin();
+            displayWin(result.is_X);
             toggleBlockAction();
         }else if(!result.win && myBoardConsole.getHandsPlayed === 9){
             displayTie();
         }
     }
 
-    function displayWin(){
+    function displayWin(is_X){
         myBoardConsole.displayWin_p()
+        alert(`Player ${!is_X ? "red": "blue"} wins`)
         
     }
 
     function displayTie(){
         myBoardConsole.displayTie_p();
+        alert("It's a tie")
     }
 
     function toggleBlockAction(){
@@ -229,17 +254,31 @@ const myBoard = function(){
         });
     }
 
+    function activateButtonsAction(){
+        buttons.forEach((e) =>{
+            e.disabled = false;
+        });
+    }
+
+    function playNewRound(){
+        //fusione del gioco su console con il gioco su schermo
+    
+        //reset to initial state
+        myBoardConsole.clearBoard();
+        resetStyle_onBoard();
+        myBoardConsole.resetHandsPlayed();
+        activateButtonsAction();
+        myBoardConsole.setIs_X();
+        resetBackground();
+        
+    }
+    
+    
+    const newRoundButton = document.querySelector(".another-round");
+    newRoundButton.addEventListener("click", () =>{playNewRound();
+    });
+
     return {setXorOStyle, resetStyle_onBoard, buttons_on_board, getButtonbyPosition_onBoard, toggleBlockAction};
 }();
 
 
-function playNewRound(){
-    //fusione del gioco su console con il gioco su schermo
-
-    //reset to initial state
-    myBoardConsole.clearBoard();
-    myBoard.resetStyle_onBoard();
-    myBoardConsole.resetHandsPlayed();
-    myBoard.toggleBlockAction();
-    
-}
