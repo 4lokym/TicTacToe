@@ -10,7 +10,16 @@ body{
     display: grid;
     align-content: center;
     justify-content: center;
+}
+
+.board{
+    display: grid;
+    align-content: center;
+    justify-content: center;
     gap: 10px;
+    
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
 }
 
 .xo{
@@ -24,7 +33,7 @@ body{
     border-radius: 5px;
     background-color: rgb(192, 192, 192);
     box-shadow: rgb(131, 131, 131) 0px 10px;
-    transition:all 50ms;
+    transition:all 150ms;
 }
 
 .x{

@@ -1,6 +1,7 @@
-const myBoard = function (){
+const myBoardConsole = function (){
 
     let is_X = false;
+    let hand_played = 0;
 
     function getIs_X(){
         return is_X;
@@ -40,7 +41,7 @@ const myBoard = function (){
         console.log(`${board[2][0]}|${board[2][1]}|${board[2][2]}`);
     }
 
-    function displayWin_p(is_X = true){
+    function displayWin_p(){
         console.log(`${is_X? "Player X":"Player O"} wins`);
     }
     function displayTie_p(){
@@ -84,22 +85,24 @@ const myBoard = function (){
         }
     }();
 
-    function playHand_p(x, y, is_X){
+    function playHand_p(x, y){
+        is_X = !is_X;
         setSimbolOnBoard_p(x, y, is_X);
+        hand_played++;
         displayBoard();
         console.log("");
         const win = check_p.all();
         return {is_X, win};
     }
 
-    function playHand(x, y, is_X){
+    function playHand(x, y){
         if(x === undefined || y === undefined || is_X === undefined){
             throw new Error("Position or simbol aren't defined");
         }
 
         if(!isNaN(x) || !isNaN(y)){
             if(board[x%3][y%3] === "~"){
-                return playHand_p(x,y,is_X);
+                return playHand_p(x,y);
             }else{
                 throw new Error("Position alredy signed, try another one");
             }
@@ -108,19 +111,20 @@ const myBoard = function (){
         }
     }
 
-    function playRound(){
+    function playRoundConsole(){
         is_X = false;
         let status;
-        for(let i = 0; i<9; i++){
-            is_X = !is_X;
-            let position = choosePosition();
+        resetHandsPlayed();
+        clearBoard();
+        for(; hand_played<9;){
+            
+            let position = choosePositionConsole();
             try{    
-                status = playHand(position[0], position[1],is_X);
+                status = playHand(position[0], position[1]);
             }catch (e){
                 console.log("Something went wrong, try again");
                 console.log(e.message);
-                i--;
-                is_X = !is_X;
+                hand_played--;
                 continue;
             }
 
@@ -135,7 +139,15 @@ const myBoard = function (){
 
     }
 
-    function choosePosition(){
+    function resetHandsPlayed(){
+        hand_played = 0;
+    }
+
+    function getHandsPlayed(){
+        return hand_played;
+    }
+
+    function choosePositionConsole(){
 
         let x = -(-(prompt("Set x")));
         let y = -(-(prompt("Set y")));
@@ -143,19 +155,91 @@ const myBoard = function (){
         return [x, y];
     }
 
-    return {getBoard, clearBoard, displayBoard, playRound, playHand, choosePosition, getIs_X, getXorO_String};
+
+
+    return {getBoard, clearBoard, displayBoard, playRoundConsole, playHand, choosePositionConsole, getIs_X, getXorO_String, resetHandsPlayed, getHandsPlayed, displayTie_p, displayWin_p};
 
 }();
 
-const screen_board = document.querySelector("body");
+const myBoard = function(){
+    const screen_board = document.querySelector("body");
+    const buttons = document.querySelectorAll(".xo");
+    const buttons_on_board = function(){
+        let matrix = [];
 
-screen_board.addEventListener("click", function (e){
-    if(e.target.tagName === "BUTTON"){
-        changeStyleOnClick(e.target);
+        for(let i =0; i<9;){
+            let temp = [];
+            for(let j=0; j<3; i++,j++){
+                temp.push(buttons[i]);
+            }
+            matrix.push(temp);
+        }
+        
+        return matrix;
+    }();
+
+
+    //---------
+    screen_board.addEventListener("click", function (e){
+        const button = e.target;
+        if(button.tagName === "BUTTON" && !(button.className === "x" || button.className === "o")){
+            winTieHandler(myBoardConsole.playHand(button.id[0], button.id[1]));
+            setXorOStyle(button);
+        }
+    });
+
+    function setXorOStyle(button){
+        button.classList.add(myBoardConsole.getXorO_String().toLowerCase());
+        button.textContent = `${myBoardConsole.getXorO_String()}`;
     }
-});
 
-function changeStyleOnClick(button){
-    button.classList.add(myBoard.getXorO_String().toLowerCase());
-    button.textContent = `${myBoard.getXorO_String()}`;
+    function resetStyle_onBoard(){
+        buttons.forEach(button => {
+            button.classList.remove("x");
+            button.classList.remove("o");
+            button.textContent = ``;
+        });  
+    }
+
+    function getButtonbyPosition_onBoard(x, y){
+        return buttons_on_board[y%3][x%3];
+    }
+
+    function winTieHandler(result){
+        if(result.win){
+            displayWin();
+            toggleBlockAction();
+        }else if(!result.win && myBoardConsole.getHandsPlayed === 9){
+            displayTie();
+        }
+    }
+
+    function displayWin(){
+        myBoardConsole.displayWin_p()
+        
+    }
+
+    function displayTie(){
+        myBoardConsole.displayTie_p();
+    }
+
+    function toggleBlockAction(){
+        buttons.forEach((e) =>{
+            e.disabled = !e.disabled;
+        });
+    }
+
+    return {setXorOStyle, resetStyle_onBoard, buttons_on_board, getButtonbyPosition_onBoard, toggleBlockAction};
+}();
+
+
+function playNewRound(){
+    //fusione del gioco su console con il gioco su schermo
+
+    //reset to initial state
+    myBoardConsole.clearBoard();
+    myBoard.resetStyle_onBoard();
+    myBoardConsole.resetHandsPlayed();
+    myBoard.toggleBlockAction();
+    
 }
