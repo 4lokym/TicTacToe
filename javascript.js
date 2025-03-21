@@ -190,6 +190,7 @@ const myBoard = function(){
         if(button.className === "xo" && !(button.className === "x" || button.className === "o")){
             setXorOStyle(button);
             setBackGround();
+            displayOnText(`It's the ${myBoardConsole.getIs_X() ? "blue" : "red"} player's round`);
             winTieHandler(myBoardConsole.playHand(button.id[0], button.id[1]));
         }
     });
@@ -231,21 +232,24 @@ const myBoard = function(){
     function winTieHandler(result){
         if(result.win){
             displayWin(result.is_X);
+            resetBackground();
             toggleBlockAction();
-        }else if(!result.win && myBoardConsole.getHandsPlayed === 9){
+        }else if(myBoardConsole.getHandsPlayed() > 8){
             displayTie();
+            toggleBlockAction();
         }
     }
 
     function displayWin(is_X){
         myBoardConsole.displayWin_p()
-        alert(`Player ${!is_X ? "red": "blue"} wins`)
+        displayOnText(`Player ${!is_X ? "red": "blue"} wins`);
+
         
     }
 
     function displayTie(){
         myBoardConsole.displayTie_p();
-        alert("It's a tie")
+        displayOnText("It's a tie");
     }
 
     function toggleBlockAction(){
@@ -270,6 +274,7 @@ const myBoard = function(){
         activateButtonsAction();
         myBoardConsole.setIs_X();
         resetBackground();
+        cleanDisplayText();
         
     }
     
@@ -282,3 +287,11 @@ const myBoard = function(){
 }();
 
 
+const display_text = document.querySelector(".display");
+
+function displayOnText(string){
+    display_text.textContent = string;
+}
+function cleanDisplayText(){
+    display_text.textContent = "";
+}
