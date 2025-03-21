@@ -4,9 +4,14 @@
     box-sizing: border-box;
 }
 
+:root{
+    overflow: auto;
+}
+
 body{
     height: 100vh;
     width: 100vw;
+    min-width: 350px;
     display: grid;
     align-content: center;
     justify-content: center;
@@ -56,7 +61,7 @@ body{
     margin: 2rem;
     margin-top: 5rem;
     width: fit-content;
-    font-size: min(5vw, 3rem);
+    font-size: calc(min(5vw, 3rem) + 5px);
     background-color: black;
     padding: 1rem;
     outline:none;
@@ -90,7 +95,7 @@ body{
 }
 
 .display{
-    font-size: min(7vw, 3rem);
+    font-size: calc(min(8vw, 3rem) + 5px);
     min-height: 5rem;
     grid-column: 2/3;
     grid-row: 1/2;
